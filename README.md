@@ -4,7 +4,7 @@ grid-world-scheme
 Final project for AP Computer Science.
 
 ##Summary
-For my final AP Computer Science A project sophomore year, I decided to implement Grid World in [Scheme][1], and specifically, [Racket][2] (previously known as PLT Scheme). Along the way, I built parts of Java's most common data abstractions (String, ArrayList, 2d arrays, HashMap). I also developed a testing suite with various types of unit tests.
+For my final AP Computer Science project sophomore year, I decided to implement Grid World in [Scheme][1], and specifically, [Racket][2] (previously known as PLT Scheme). Along the way, I built parts of Java's most common data abstractions (String, ArrayList, 2d arrays, HashMap). I also developed a testing suite with various types of unit tests.
 
 ##What is Grid World?
 For those that don't know, Grid World a Java [case study][3] provided by CollegeBoard. To put it in their own words:    
