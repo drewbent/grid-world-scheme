@@ -9,7 +9,13 @@ For my final AP Computer Science project sophomore year, I decided to implement 
 ##What is Grid World?
 For those that don't know, Grid World a Java [case study][3] provided by CollegeBoard. To put it in their own words:    
 
-	The GridWorld Case Study provides a graphical environment where visual objects inhabit and interact in a two-dimensional grid. In this case study, you will design and create “actor” objects, add them to a grid, and determine whether the actors behave according to their specifications. A graphical user interface (GUI) is provided that displays the grid and the actors. In addition, the GUI has a facility for adding actors to the grid and for invoking methods on them.                                          
+	The GridWorld Case Study provides a graphical environment where visual
+	objects inhabit and interact in a two-dimensional grid. In this case
+	study, you will design and create “actor” objects, add them to a grid, and
+	determine whether the actors behave according to their specifications. A
+	graphical user interface (GUI) is provided that displays the grid and the
+	actors. In addition, the GUI has a facility for adding actors to the grid
+	and for invoking methods on them.                                          
 	
 To put it simply, GridWorld is a case study that is meant to help CS students learn about data abstraction, inheritance, and other object oriented programming concepts. It is akin to [cellular automata][4] (widely popularized by [Conway's Game of Life][5]). The Java packaged is composed an **Actor** class, **Grid** class, and **Location** class, among others. An **Actor** can be added to a **Grid** (2d array) at a certain **Location** ( (x, y) coordinate pair). These **Actor**s can move around to other locations each time their act() method is called (i.e. each time a frame occurs). They can rotate, change colors, and interact with other **Actor**s in the **Grid**. 
 
