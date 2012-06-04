@@ -6,6 +6,9 @@
 (define ROWS 5)
 (define COLS 5)
 
+(define ASCII-MODE 0)
+(define GRAPHICS-MODE 1)
+
 (define CELL-WIDTH 100)
 (define CELL-PADDING 5)
 
@@ -391,14 +394,45 @@
   dispatch)
 
 ; ACTOR WORLD
-(define (new-actor-world grid)
+(define (new-actor-world grid [type ASCII-MODE])
   (define (add loc occupant)
     (occupant 'put-self-in-grid grid loc))
   (define (add-random occupant)
     (occupant 'put-self-in-grid grid (new-location (random (grid 'get-num-rows)) (random (grid 'get-num-cols)))))
   (define (remove loc)
     (grid 'remove loc))
-  (define (step t) ; updates grid data
+  
+;      #     #####   #####  ### ### 
+;     # #   #     # #     #  #   #  
+;    #   #  #       #        #   #  
+;   #     #  #####  #        #   #  
+;   #######       # #        #   #  
+;   #     # #     # #     #  #   #  
+;   #     #  #####   #####  ### ### 
+  (define (step-ascii) ; updates grid data
+    ((grid 'get-occupied-locations) 'for-each (λ (loc) ((grid 'get loc) 'act)))
+    (show-ascii)
+    (wait (/ 1 FRAMES-PER-SEC))
+    (step-ascii))
+  (define (show-ascii) ; updates grid visuals
+                    (display "\n\n\n\n")
+    (for-each (lambda (row) 
+                (display "\n")
+                (for-each (λ (col)
+                            (let ((loc (new-location row col)))
+                              (cond ((null? (grid 'get loc)) (display EMPTY-SPOT))
+                                    (else (print ((grid 'get loc) 'to-shape))))))
+                          (range (grid 'get-num-cols))))
+              (range (grid 'get-num-rows))))
+  
+;     #####  ######     #    ######  #     # ###  #####   #####  
+;    #     # #     #   # #   #     # #     #  #  #     # #     # 
+;    #       #     #  #   #  #     # #     #  #  #       #       
+;    #  #### ######  #     # ######  #######  #  #        #####  
+;    #     # #   #   ####### #       #     #  #  #             # 
+;    #     # #    #  #     # #       #     #  #  #     # #     # 
+;     #####  #     # #     # #       #     # ###  #####   #####  
+  (define (step-graphics t) ; updates grid data
     (let ((INTERVAL (round (/ 28 FRAMES-PER-SEC)))) ; example: FPS = 2; INTERVAL = 14 (update every 14 'real' frames to achieve a simulated 2 FPS)
       ; TODO only works well for numbers that are factors of 28; will not work for FPS > 28
       (cond ((and (> t 0) (= (modulo (modulo t 28) INTERVAL) 0)) ; will not update update data first interval (this allows user to see intitial conditions)
@@ -408,8 +442,8 @@
                ; ...then update them by calling their 'act' method
                (objs 'for-each (λ (obj) (obj 'act))))))
       ; (this ensures that no bugs arise when objects are deleted in the middle of updating the entire grid)
-      (show)))
-  (define (show) ; updates grid data
+      (show-graphics)))
+  (define (show-graphics) ; updates grid data
     ; HELPER FUNCTIONS
     (define (add-to-grid row col image grid [size 20]) ; TODO rename since this only RETURNS a grid with the added obj
       (overlay/align/offset "left" "top" grid (+ (* size col) 0) (+ (* size row) 0) (pad-to (scale-to image size))))
@@ -444,8 +478,11 @@
       ;(else (place-image (obj 'to-shape) (* (loc 'get-row) 30) (* (loc 'get-col) 30) (recur row (- col 1))))))))))
       (recur (- (grid 'get-num-rows) 1) (- (grid 'get-num-cols) 1))
       (place-image/align g 0 0 "left" "top" (empty-scene (* CELL-WIDTH COLS) (* CELL-WIDTH ROWS)))))
+ 
   (define (play . args)
-    (animate step))
+    (cond ((equal? type ASCII-MODE) (apply step-ascii args))
+          (else 
+           (animate step-graphics))))
   (define (to-string)
     (grid 'to-string))
   (define (dispatch m . args)
@@ -549,7 +586,7 @@
 (define grid (new-grid ROWS COLS))
 (define g grid)
 ;(g 'get-occupied-locations)
-(define aw (new-actor-world g))
+(define aw (new-actor-world g GRAPHICS-MODE))
 ;(aw 'add (new-actor "Actor"))
 (aw 'add (new-actor "Rock"))
 (aw 'add (new-actor "Flower"))
