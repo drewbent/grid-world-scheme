@@ -520,7 +520,7 @@
           ((eq? m 'get-direction) (apply get-direction args))
           ((eq? m 'get-grid) (apply get-grid args))
           ((eq? m 'get-name) (apply get-name args))
-          ((eq? m 'to-0string) (apply to-string args))
+          ((eq? m 'to-string) (apply to-string args))
           ((eq? m 'to-shape) (apply to-shape args))
           ((eq? m 'is-a?) (apply is-a? args))
           (else (error-method-undefined m))))
