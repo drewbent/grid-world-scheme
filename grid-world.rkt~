@@ -1,5 +1,6 @@
 #lang slideshow
 
+;(require htdp/world)
 (require 2htdp/universe 2htdp/image racket/draw)
 
 (define ROWS 5)
@@ -37,6 +38,8 @@
           (else (recur (string-append text (make-string COLS #\*) "\n") (- count 1)))))
   (recur (string) ROWS))
 
+; (set! ascii (string-append (make-string COLS #\*) "\n" (make-string COLS #\*)  "\n" (make-string COLS #\*) "\n")))
+
 ; HELPERS
 (define (between x a b) ; inclusive
   (and (>= x a) (<= x b)))
@@ -73,7 +76,7 @@
 (define wait sleep) ; wait x seconds
   
 ; SYNTAX
-(define-syntax try ; (taken from: http://stackoverflow.com/questions/1557854/how-does-pltscheme-catch-errors)
+(define-syntax try ; (http://stackoverflow.com/questions/1557854/how-does-pltscheme-catch-errors)
   (syntax-rules (catch finally)
     ((_ try-body ... (catch catch-proc))
      (with-handlers (((λ (ex) #t)
@@ -352,6 +355,7 @@
                                 (row 'for-each (λ (elem) (append-output elem "  ")))
                                 row-string)
                               (append-output "\n"))))
+      ;(substring output 0 (- (string-length output) 1))))
       output))
   (define (get loc)
     (grid-d 'get (loc 'get-row) (loc 'get-col)))
@@ -429,12 +433,15 @@
     (let ((g (make-grid ROWS COLS CELL-WIDTH)))
       (define (recur row col)
         (cond ((< col 0) (recur (- row 1) (- (grid 'get-num-cols) 1)))
+              ;((< row 0) (empty-scene APPLET-WIDTH APPLET-HEIGHT))
               ((>= row 0)
                (let ((loc (new-location row col)))
                  (let ((obj (grid 'get loc)))
                    (cond ((not (null? obj)) 
                           (set! g (add-to-grid (loc 'get-row) (loc 'get-col) (obj 'to-shape) g CELL-WIDTH))))
                    (recur row (- col 1)))))))
+      ;(place-image BLANK (* (loc 'get-row) 30) (* (loc 'get-col) 30) (recur row (- col 1))))
+      ;(else (place-image (obj 'to-shape) (* (loc 'get-row) 30) (* (loc 'get-col) 30) (recur row (- col 1))))))))))
       (recur (- (grid 'get-num-rows) 1) (- (grid 'get-num-cols) 1))
       (place-image/align g 0 0 "left" "top" (empty-scene (* CELL-WIDTH COLS) (* CELL-WIDTH ROWS)))))
   (define (play . args)
@@ -448,6 +455,12 @@
           ((eq? m 'to-string) (apply to-string args))
           (else (error-method-undefined m))))
   dispatch)
+
+;(on-key-event 
+; (lambda (s k)
+;   (display s)
+;   (display k)))
+;(on-redraw create-UFO-scene)
 
 ; ACTOR
 (define (new-actor [name "Actor"])
@@ -466,6 +479,8 @@
       (set-direction (+ my-dir HALF-CIRCLE)))
     (define (act-bug)
       (let ((loc (my-loc 'get-adjacent-location my-dir)))
+        ;(display "\n")
+        ;(pprint my-loc) 
         (cond ((and (my-grid 'is-valid? loc) (or (null? (my-grid 'get loc)) ((my-grid 'get loc) 'is-a? "Flower"))) 
                (let ((curr-loc my-loc))
                  (move-to loc)
@@ -527,13 +542,17 @@
   (init)
   dispatch)
 
+;(define a (new-array-list))
+;(define a2 (new-2d-array 10 20))
+;(define l (new-location 3 4))
+;(define m (new-map))
 (define grid (new-grid ROWS COLS))
 (define g grid)
+;(g 'get-occupied-locations)
 (define aw (new-actor-world g))
+;(aw 'add (new-actor "Actor"))
 (aw 'add (new-actor "Rock"))
-(aw 'add (new-location 0 1) (new-actor "Rock"))
 (aw 'add (new-actor "Flower"))
-(aw 'add (new-actor "Actor"))
 (aw 'add (new-actor "Bug"))
 (aw 'play)
 
@@ -595,6 +614,8 @@
                   (m 'put category e)
                   (make-error m rest)))))
   (define (print-errors)
+    ;(errors 'to-string))
+    ;(pprint errors)
     (let ((msg (string)))
       (let ((append-msg (λ ([msg1 ""] . msgs) (set! msg (apply string-append msg msg1 msgs)))))
         (errors 'for-each (λ (key value) 
@@ -669,3 +690,6 @@
   (cond ((errors 'is-empty?) (display "All tests passed"))
         (else (print-errors))))
 (run-tests)
+
+;(define (pause milliseconds)
+;  (expt milliseconds 1000))
