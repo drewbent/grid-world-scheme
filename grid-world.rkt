@@ -2,10 +2,10 @@
 
 (require 2htdp/universe 2htdp/image racket/draw)
 
-(define ROWS 5)
-(define COLS 5)
+(define ROWS 10)
+(define COLS 10)
 
-(define CELL-WIDTH 100)
+(define CELL-WIDTH 50)
 (define CELL-PADDING 5)
 
 (define FLOWER-SHADES 5)
@@ -450,7 +450,7 @@
   dispatch)
 
 ; ACTOR
-(define (new-actor [name "Actor"])
+(define (new-actor [name "Actor"] . args)
   (define my-name name)
   (define my-loc null)
   (define my-grid null)
@@ -466,6 +466,7 @@
                  (aw 'add curr-loc (new-actor "Flower"))))
   (define (bug-turn)
     (set-direction (+ my-dir HALF-RIGHT)))
+  (define box-bug-steps 0)
   
   (define (init)
     (set-direction NORTH))
@@ -477,15 +478,25 @@
         (cond ((bug-can-move? loc)
                (bug-move loc))
               (else (bug-turn)))))
+    (define (act-box-bug side-length)
+      (let ((loc (my-loc 'get-adjacent-location my-dir)))
+        (cond ((and (< box-bug-steps side-length) (bug-can-move? loc))
+               (bug-move loc)
+               (set! box-bug-steps (increment box-bug-steps)))
+              (else
+               (bug-turn)
+               (bug-turn)
+               (set! box-bug-steps 0)))))
     (define (act-rock)
       void)
     (define (act-flower) ; find a dynamic way to darken bitmap
       (set! flower-shade (cond ((>= flower-shade FLOWER-SHADES) FLOWER-SHADES)
                                    (else (+ flower-shade 1)))))
-    (cond ((equal? my-name "Actor") (act-actor))
-          ((equal? my-name "Bug") (act-bug))
-          ((equal? my-name "Rock") (act-rock))
-          ((equal? my-name "Flower") (act-flower))))
+    (cond ((equal? my-name "Actor") (apply act-actor args))
+          ((equal? my-name "Bug") (apply act-bug args))
+          ((equal? my-name "BoxBug") (apply act-box-bug args))
+          ((equal? my-name "Rock") (apply act-rock args))
+          ((equal? my-name "Flower") (apply act-flower args))))
   (define (put-self-in-grid gr loc)
     (set! my-grid gr)
     (set! my-loc loc)
@@ -672,4 +683,5 @@
 (aw 'add (new-actor "Flower"))
 (aw 'add (new-actor "Actor"))
 (aw 'add (new-actor "Bug"))
+(aw 'add (new-actor "BoxBug" 4))
 (aw 'play)
