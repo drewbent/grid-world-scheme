@@ -43,17 +43,12 @@ Let's take GridWorld's **Location** class as an example.
    	loc = new Location(r, c);		(define loc (new-location r c))
 	loc.getRow();					(loc 'get-row)               
 	
-###Graphics
-Currently, there are two methods of displaying GridWorld. For the most part, data and graphics separated in the program (kind of like the Model and Views in an MVC model). 
-#####ASCII
-In this mode, there is a combination of ASCII art and actual bitmaps. They are displayed in the console/REPL. I used this mode originally (before the GRAPHICS mode was implemented) to test my code and see if the data was being updated appropriately.
-#####GRAPHICS
-This is where Racket comes into play. Racket has some awesome graphics packages (or *teachpacks* they call them). I used [*universe.ss*][10] for the interactivity, [*image.ss*][11] for generating images and transforming them (e.g. grid), and [*draw.ss*][12] for adding the bitmaps.       
-
+###Graphics and Animation
+For the most part, data and graphics are separated in the program.
 
 [1]: http://en.wikipedia.org/wiki/Scheme_(programming_language) "Scheme"
 [2]: http://racket-lang.org/ "Racket"      
-[3]:  http://apcentral.collegeboard.com/apc/public/courses/teachers_corner/151155.html "Grid World"          
+[3]: http://apcentral.collegeboard.com/apc/public/courses/teachers_corner/151155.html "Grid World"          
 [4]: http://en.wikipedia.org/wiki/Cellular_automaton "Cellular Automata"
 [5]: http://en.wikipedia.org/wiki/Conway's_Game_of_Life "Conway's Game of Life"                      
 [6]: http://www.horstmann.com/gridworld/javadoc/overview-summary.html "GridWorld Java Docs"
