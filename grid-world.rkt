@@ -10,7 +10,7 @@
 
 (define FLOWER-SHADES 5)
 
-(define FRAMES-PER-SEC 1)
+(define FRAMES-PER-SEC 10)
 
 (define EMPTY-SPOT "{ }")
 
@@ -530,8 +530,8 @@
 (define grid (new-grid ROWS COLS))
 (define g grid)
 (define aw (new-actor-world g))
-(aw 'add (new-actor "Rock"))
-(aw 'add (new-location 0 1) (new-actor "Rock"))
+(aw 'add (new-location 3 1) (new-actor "Rock"))
+(aw 'add (new-location 4 1) (new-actor "Rock"))
 (aw 'add (new-actor "Flower"))
 (aw 'add (new-actor "Actor"))
 (aw 'add (new-actor "Bug"))
@@ -542,20 +542,18 @@
 ;         - returns true if all test cases passed, otherwise returns false and prints out failed test cases
 ;         - test cases are in the format '([desired output] [arg1] [arg2] [...])
 ; Example usage - 
-;   (unit-test + '(7 1 5 1) '(3 1 4 -2) --> #t
+;   (unit-test + '(7 1 5 1) '(3 1 4 -2)) --> #t
 ;   test cases:
 ;       7 ?= 1 + 5 + 1  --> true
 ;       3 ?= 1 + 4 - 2  --> true
 ;   
-;   (unit-test + '(7 1 5 1) '(3 1 4 -1) --> #f
+;   (unit-test + '(7 1 5 1) '(3 1 4 -1)) --> #f
 ;   test cases:
 ;       7 ?= 1 + 5 + 1  --> true
 ;       3 ?= 1 + 4 - 1  --> false
 ;
 ; Arguments   p - procedure
-;             outputs - list of desired outputs
-;             case1 - list representing a test case (in the format as described above)
-;             args2 - list representing another test case (in the format as described above)
+;             case1 - ( [desired output] . args)
 ;             etc. (only one test case is required)
 (define (unit-test p . cases)
   (let ((pass? #t))
@@ -571,8 +569,7 @@
                       (apply test (cdr cases))))))))
     (apply test cases)))
 (define (error? p . cases)
-  (cond ((apply unit-test p cases) #f)
-        (else #t)))
+  (not (apply unit-test p cases)))
 (define (exception? p)
   (try
    (p)
