@@ -12,7 +12,7 @@
 (define CELL-WIDTH 100)
 (define CELL-PADDING 5)
 
-(define FLOWER-SHADES 5)
+(define FLOWER-SHADES 4)
 
 (define FRAMES-PER-SEC 1)
 
@@ -124,7 +124,7 @@
         (else (obj 'to-string))))
 
 ; ARRAY LIST
-(define (new-array-list)
+(define (new-array)
   (define array (list))
   (define (add element)
     (set (length array) element))
@@ -193,11 +193,11 @@
 
 ; TWO-DIMENSIONAL ARRAY
 (define (new-2d-array rows cols . rest)
-  (define array (new-array-list))
+  (define array (new-array))
   (define (make-custom-array num)
     (repeat (λ () 
               (array 'add
-                     (let ((row (new-array-list)))
+                     (let ((row (new-array)))
                        (repeat (λ () 
                                  (row 'add num))
                                cols)
@@ -297,11 +297,10 @@
 (ACTOR-IMAGE-MAPPINGS 'put "ChameleonCritter" (read-bitmap "images/ChameleonCritter.gif"))
 (ACTOR-IMAGE-MAPPINGS 'put "CrabCritter" (read-bitmap "images/CrabCritter.gif"))
 (ACTOR-IMAGE-MAPPINGS 'put "Critter" (read-bitmap "images/Critter.gif"))
-(ACTOR-IMAGE-MAPPINGS 'put "Flower1" (read-bitmap "images/Flower1.gif"))
-(ACTOR-IMAGE-MAPPINGS 'put "Flower2" (read-bitmap "images/Flower2.gif"))
-(ACTOR-IMAGE-MAPPINGS 'put "Flower3" (read-bitmap "images/Flower3.gif"))
-(ACTOR-IMAGE-MAPPINGS 'put "Flower4" (read-bitmap "images/Flower4.gif"))
-(ACTOR-IMAGE-MAPPINGS 'put "Flower5" (read-bitmap "images/Flower5.gif"))
+(ACTOR-IMAGE-MAPPINGS 'put "Flower1" (read-bitmap "images/Flower2.gif"))
+(ACTOR-IMAGE-MAPPINGS 'put "Flower2" (read-bitmap "images/Flower3.gif"))
+(ACTOR-IMAGE-MAPPINGS 'put "Flower3" (read-bitmap "images/Flower4.gif"))
+(ACTOR-IMAGE-MAPPINGS 'put "Flower4" (read-bitmap "images/Flower5.gif"))
 
 ; LOCATION
 (define (new-location r c)
@@ -370,7 +369,7 @@
       (put loc null)
       obj))
   (define (get-occupied-locations)
-    (let ((locs (new-array-list)))
+    (let ((locs (new-array)))
       (for-each (lambda (row) 
                   (for-each (λ (col)
                               (let ((loc (new-location row col)))
@@ -433,16 +432,11 @@
 ;    #     # #    #  #     # #       #     #  #  #     # #     # 
 ;     #####  #     # #     # #       #     # ###  #####   #####  
   (define (step-graphics t) ; updates grid data
-    (let ((INTERVAL (round (/ 28 FRAMES-PER-SEC)))) ; example: FPS = 2; INTERVAL = 14 (update every 14 'real' frames to achieve a simulated 2 FPS)
-      ; TODO only works well for numbers that are factors of 28; will not work for FPS > 28
-      (cond ((and (> t 0) (= (modulo (modulo t 28) INTERVAL) 0)) ; will not update update data first interval (this allows user to see intitial conditions)
-             ; first, retrieve all objects from grid and adds them to array...
-             (let ((objs (new-array-list)))
-               ((grid 'get-occupied-locations) 'for-each (λ (loc) (objs 'add (grid 'get loc))))
-               ; ...then update them by calling their 'act' method
-               (objs 'for-each (λ (obj) (obj 'act))))))
-      ; (this ensures that no bugs arise when objects are deleted in the middle of updating the entire grid)
-      (show-graphics)))
+    (cond ((= (modulo (modulo t 28) (round (/ 28 FRAMES-PER-SEC))) 0) ; TODO only works well for numbers that are factors of 28
+           ;(display "\n")
+           ;(display t)
+           ((grid 'get-occupied-locations) 'for-each (λ (loc) ((grid 'get loc) 'act))))) ; TODO will probably not work for FRAMES-PER-SEC > 28
+    (show-graphics))
   (define (show-graphics) ; updates grid data
     ; HELPER FUNCTIONS
     (define (add-to-grid row col image grid [size 20]) ; TODO rename since this only RETURNS a grid with the added obj
@@ -481,8 +475,7 @@
  
   (define (play . args)
     (cond ((equal? type ASCII-MODE) (apply step-ascii args))
-          (else 
-           (animate step-graphics))))
+          (else (animate step-graphics))))
   (define (to-string)
     (grid 'to-string))
   (define (dispatch m . args)
@@ -516,12 +509,12 @@
       (set-direction (+ my-dir HALF-CIRCLE)))
     (define (act-bug)
       (let ((loc (my-loc 'get-adjacent-location my-dir)))
-        ;(display "\n")
-        ;(pprint my-loc) 
+        (display "\n")
+        (pprint loc) 
         (cond ((and (my-grid 'is-valid? loc) (or (null? (my-grid 'get loc)) ((my-grid 'get loc) 'is-a? "Flower"))) 
                (let ((curr-loc my-loc))
-                 (move-to loc)
-                 (aw 'add curr-loc (new-actor "Flower"))))
+                 (move-to loc)))
+                 ;(aw 'add curr-loc (new-actor "Flower"))))
               (else (set-direction (+ my-dir HALF-RIGHT))))))
     (define (act-rock)
       void)
@@ -579,7 +572,7 @@
   (init)
   dispatch)
 
-;(define a (new-array-list))
+;(define a (new-array))
 ;(define a2 (new-2d-array 10 20))
 ;(define l (new-location 3 4))
 ;(define m (new-map))
@@ -589,7 +582,11 @@
 (define aw (new-actor-world g GRAPHICS-MODE))
 ;(aw 'add (new-actor "Actor"))
 (aw 'add (new-actor "Rock"))
-(aw 'add (new-actor "Flower"))
+(aw 'add (new-actor "Rock"))
+(aw 'add (new-location 4 0) (new-actor "Flower"))
+(aw 'add (new-location 4 1) (new-actor "Flower"))
+(aw 'add (new-location 4 2) (new-actor "Flower"))
+(aw 'add (new-location 4 3) (new-actor "Flower"))
 (aw 'add (new-actor "Bug"))
 (aw 'play)
 
@@ -642,7 +639,7 @@
   (define (make-error e category . rest) ; TODO eventually should support multiple categories
     (cond ((null? rest)
            (cond ((errors 'contains? category)
-                  (let ((arr (new-array-list)))
+                  (let ((arr (new-array)))
                     (arr 'add (errors 'get category))
                     (arr 'add e)
                     (errors 'put category arr)))
@@ -662,7 +659,7 @@
   (let ((category "HELPER"))
     (cond ((error? (λ (wd) (pluralize wd 2)) (list "dogs" 'dog) (list "dogs" "dog"))
            (make-error 1 category)))
-    (cond ((error? (λ (wd) (pluralize wd 1)) '(dog dog) '("dog" "dog") '(0 0) (let ((arr (new-array-list))) (list arr arr)))
+    (cond ((error? (λ (wd) (pluralize wd 1)) '(dog dog) '("dog" "dog") '(0 0) (let ((arr (new-array))) (list arr arr)))
            (make-error 2 category)))
     (cond ((error? (λ (wd) (pluralize wd 0)) '("dogs" dog) '("dogs" "dog") '("1s" 1))
            (make-error 3 category)))
@@ -677,7 +674,7 @@
     (cond ((error? (λ (n) ((repeated sqr 3) n)) '(1 1) '(256 2) '(1 -1) '(256 -2) '(0 0))
            (make-error 8 category))))
   (let ((category "ARRAY"))
-    (cond ((let ((arr (new-array-list)))
+    (cond ((let ((arr (new-array)))
              (arr 'add -1)
              (arr 'add 0)
              (arr 'add 1)
@@ -699,13 +696,13 @@
                         (arr 'contains? 10)
                         (not (arr 'contains? 4))))))
            (make-error 1 category)))
-    (cond ((not (exception? (λ () ((new-array-list) 'get 2))))
+    (cond ((not (exception? (λ () ((new-array) 'get 2))))
            (make-error 2 category)))
-    (cond  ((not (exception? (λ () ((new-array-list) 'set 1 2))))
+    (cond  ((not (exception? (λ () ((new-array) 'set 1 2))))
             (make-error 3 category)))
-    (cond  ((exception? (λ () ((new-array-list) 'set 0 1)))
+    (cond  ((exception? (λ () ((new-array) 'set 0 1)))
             (make-error 4 category)))
-    (cond  ((exception? (λ () (let ((arr (new-array-list)))
+    (cond  ((exception? (λ () (let ((arr (new-array)))
                                      (arr 'add 1)
                                      (arr 'get 0))))
            (make-error 5 category))))
