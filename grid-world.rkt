@@ -527,16 +527,6 @@
   (init)
   dispatch)
 
-(define grid (new-grid ROWS COLS))
-(define g grid)
-(define aw (new-actor-world g))
-(aw 'add (new-location 3 1) (new-actor "Rock"))
-(aw 'add (new-location 4 1) (new-actor "Rock"))
-(aw 'add (new-actor "Flower"))
-(aw 'add (new-actor "Actor"))
-(aw 'add (new-actor "Bug"))
-(aw 'play)
-
 ; UNIT-TEST v2.0
 ; Summary - takes a procedure and desired outputs for a given set of arguments (arranged by test cases)
 ;         - returns true if all test cases passed, otherwise returns false and prints out failed test cases
@@ -666,3 +656,14 @@
   (cond ((errors 'is-empty?) (display "All tests passed"))
         (else (print-errors))))
 (run-tests)
+
+; Set up GridWorld
+(define grid (new-grid ROWS COLS))
+(define g grid)
+(define aw (new-actor-world g))
+(aw 'add (new-location 3 1) (new-actor "Rock"))
+(aw 'add (new-location 4 1) (new-actor "Rock"))
+(aw 'add (new-actor "Flower"))
+(aw 'add (new-actor "Actor"))
+(aw 'add (new-actor "Bug"))
+(aw 'play)
