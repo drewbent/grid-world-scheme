@@ -458,6 +458,14 @@
   
   ; local vars
   (define flower-shade 1)
+  (define (bug-can-move? loc)
+    (and (my-grid 'is-valid? loc) (or (null? (my-grid 'get loc)) ((my-grid 'get loc) 'is-a? "Flower"))))
+  (define (bug-move loc)
+    (let ((curr-loc my-loc))
+                 (move-to loc)
+                 (aw 'add curr-loc (new-actor "Flower"))))
+  (define (bug-turn)
+    (set-direction (+ my-dir HALF-RIGHT)))
   
   (define (init)
     (set-direction NORTH))
@@ -466,11 +474,9 @@
       (set-direction (+ my-dir HALF-CIRCLE)))
     (define (act-bug)
       (let ((loc (my-loc 'get-adjacent-location my-dir)))
-        (cond ((and (my-grid 'is-valid? loc) (or (null? (my-grid 'get loc)) ((my-grid 'get loc) 'is-a? "Flower"))) 
-               (let ((curr-loc my-loc))
-                 (move-to loc)
-                 (aw 'add curr-loc (new-actor "Flower"))))
-              (else (set-direction (+ my-dir HALF-RIGHT))))))
+        (cond ((bug-can-move? loc)
+               (bug-move loc))
+              (else (bug-turn)))))
     (define (act-rock)
       void)
     (define (act-flower) ; find a dynamic way to darken bitmap
