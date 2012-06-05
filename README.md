@@ -23,7 +23,14 @@ The simulation is displayed in a Java applet (as seen below).
 
 ![College Board's GridWorld Java applet](http://www.horstmann.com/gridworld/part1-constructors.png)                                               
 
-To see the full abstraction, go take a look at the [Java docs][6]. You can also download the code from [College Board][3].
+To see the full abstraction, go take a look at the [Java docs][6]. You can also download the code from [College Board][3]. 
+
+##Result
+          
+Here is what it looks like when the my code is run...
+
+![GridWorld in Scheme](images/screenshots/screenshot1.png)
+![GridWorld in Scheme](images/screenshots/screenshot2.png)
 
 ##Motivation
 I'd been exposed to the case study in my class and had also become familiar with it as it's included in the AP test. At the same time, my class had spent the first semester working with Scheme. (My teacher, [Mr. Paley][7], had previously taught at Berkeley and had brought over some of the awesome Scheme curriculum ([SICP][8]) to our high school.)     
